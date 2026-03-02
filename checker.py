@@ -42,3 +42,37 @@ def check_serial(serial_texto: str, denominacion: str) -> tuple[bool, int | None
             return True, numero
 
     return False, numero
+
+
+def check_serial_any(serial_texto: str) -> tuple[bool, int | None, str]:
+    """
+    Verifica si la serie es inválida.
+
+    Formato esperado: "NNNNNNNN X"  (número + letra de serie)
+    Solo la serie B se verifica contra los rangos ilegales.
+    Cualquier otra letra es automáticamente válido.
+
+    Retorna:
+        (es_invalido: bool, numero_limpio: int | None, letra: str)
+        es_invalido=True  → billete ILEGAL
+        es_invalido=False → billete OK
+        numero_limpio=None → no se pudo parsear el número
+    """
+    # Extraer letra de serie (última letra mayúscula del texto)
+    letra_match = re.search(r'[A-Z]', serial_texto.upper())
+    letra = letra_match.group(0) if letra_match else ""
+
+    numero = limpiar_serie(serial_texto)
+    if numero is None:
+        return False, None, letra
+
+    # Solo la serie B se coteja contra los rangos ilegales
+    if letra != "B":
+        return False, numero, letra
+
+    for rangos in RANGOS.values():
+        for rango in rangos:
+            if rango["del"] <= numero <= rango["al"]:
+                return True, numero, letra
+
+    return False, numero, letra

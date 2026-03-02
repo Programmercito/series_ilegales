@@ -11,8 +11,8 @@ echo  [2/4] Activando entorno virtual...
 call venv\Scripts\activate.bat
 
 echo  [3/4] Instalando dependencias Python...
-pip install --upgrade pip -q
-pip install -r requirements.txt
+venv\Scripts\pip install --upgrade pip -q
+venv\Scripts\pip install -r requirements.txt
 
 echo  [4/4] Verificando Tesseract-OCR...
 tesseract --version >nul 2>&1
